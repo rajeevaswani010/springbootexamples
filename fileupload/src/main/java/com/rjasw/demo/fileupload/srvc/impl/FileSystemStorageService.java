@@ -21,6 +21,9 @@ import com.rjasw.demo.fileupload.misc.StorageException;
 import com.rjasw.demo.fileupload.misc.StorageFileNotFoundException;
 import com.rjasw.demo.fileupload.srvc.StorageService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class FileSystemStorageService implements StorageService {
 
@@ -38,6 +41,7 @@ public class FileSystemStorageService implements StorageService {
 
 	@Override
 	public void store(MultipartFile file) {
+		log.info("inside store file - " + file.getName());
 		try {
 			if (file.isEmpty()) {
 				throw new StorageException("Failed to store empty file.");
