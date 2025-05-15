@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" style="height: 100%;">
+<head>
+    <title>Radius</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="icon" type="image/x-icon" href="resources/images/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="classic/resources/Radius-all.css"/>
+    <script type="text/javascript" src="resources/ext/ext-all.js" ></script>
+</head>
+<body style="height: 100%">
+<script type="text/javascript">
+    var loginUrl =  '../api/v1/login'
+        , urlParams = new URLSearchParams(window.location.search)
+        , isError=urlParams.has('error'), errorMessage = 'Authentication failure'
+        , isLogout=urlParams.has('logout'), logoutMessage = 'Logout sucessfully'
+    ;
+
+    Ext.define('radius.Login', {
+        xtype: 'login',
+        extend: 'Ext.window.Window',
+
+        requires: [
+            'Ext.form.Panel'
+        ],
+
+        autoShow: true,
+
+        width: 390,
+        autoHeight: true,
+        closable: false,
+        resizable: false,
+        modal: false,
+        iconCls: 'lockedIcon',
+        title: 'Login',
+        buttonAlign:'center',
+
+        items: {
+            bodyPadding: 10,
+            xtype: 'form',
+            reference: 'form',
+            border: false ,
+            standardSubmit: true,
+            url: loginUrl,
+            items: [
+            {
+                html: [{
+                    tag: 'div',
+                    style: 'font-weight: bold; text-align: center; color:#ff0000; padding:5px;',
+                    html: errorMessage
+                }],
+                bodyStyle:'background:none;' ,
+                hidden: !isError
+            }, {
+                html: [{
+                    tag: 'div',
+                    style: 'font-weight: normal; text-align: center; color:#5fa2dd; padding:5px;',
+                    html: logoutMessage
+                }],
+                bodyStyle:'background:none;' ,
+                hidden: !isLogout
+            },{
+                xtype: 'textfield',
+                name: 'username',
+                fieldLabel: 'Username',
+                margin: '5 0 0 10',
+                allowBlank: false
+            }, {
+                xtype: 'textfield',
+                name: 'password',
+                inputType: 'password',
+                fieldLabel: 'Password',
+                margin: '5 0 0 10',
+                allowBlank: false
+            }, {
+                xtype: 'displayfield',
+                hideEmptyLabel: false,
+                value: 'Enter any non-blank password'
+            }],
+            buttons: [{
+                text: 'Login',
+                formBind: true,
+                handler: function() {
+                    // The getForm() method returns the Ext.form.Basic instance:
+                    var form = this.up('form').getForm();
+                    if (form.isValid()) {
+                        // Submit the Ajax request and handle the response
+                        form.submit({
+                            success: function(form, action) {
+                                console.log('Success', action.result.message);
+                            },
+                            failure: function(form, action) {
+                                Ext.Msg.alert('Failed', action.result ? action.result.message : 'No response');
+                            }
+                        });
+                    }
+                }
+            }]
+        }
+    });
+
+
+    Ext.onReady(function() {
+        Ext.tip.QuickTipManager.init();
+        Ext.create('radius.Login', {errorMessage:null}).show()
+    });
+</script>
+</body>
+</html>
